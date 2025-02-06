@@ -6,6 +6,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
+/**
+ * Class representing a Security-Relevant Method (SRM).
+ */
 class Srm {
     
     // SRM types for SWAN
@@ -90,12 +93,21 @@ class Srm {
             } else {
                 packageName = this.name.substring(0, indexLastDot);
                 methodName = this.name.substring(indexLastDot + 1);
+                
+                String[] split = this.name.split("\\.");
+                String className = split[split.length - 2];
+
+                // If method name is identical to class name, it is the constructor:
+                // change name to "<init>"
+                if (methodName.equals(className)) {
+                    methodName = "<init>";
+                }
             }
         }
 
         // Return type
-        String returnType = this.returnType == null ? "void" : this.returnType;
-        strFlowdroid = String.format("<%s: %s %s(", packageName, returnType, methodName);
+        String returnTypeLocal = this.returnType == null ? "void" : this.returnType;
+        strFlowdroid = String.format("<%s: %s %s(", packageName, returnTypeLocal, methodName);
 
         // Add parameters
         for (int i = 0; i < this.parameters.length; i++) {
